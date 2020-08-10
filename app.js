@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var helmet = require('helmet')
+// var helmet = require('helmet')
 var axios = require('axios')
 
 require('dotenv').config()
@@ -16,7 +16,7 @@ var Web3 = require('web3')
 // var usersRouter = require('./routes/users');
 
 var app = express();
-app.use(helmet());
+// app.use(helmet());
 
 const server = app.listen(PORT, () => {
   console.log("Listening on PORT: " + PORT);
