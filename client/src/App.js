@@ -59,7 +59,7 @@ function App() {
 
   useEffect(() => {
     setupWeb3()
-    setListeners('http://localhost:5000/')
+    setListeners('https://ethereum-housie.herokuapp.com/')
 
     socket.on('game-data', (data) => {
       // setGameData(data)
