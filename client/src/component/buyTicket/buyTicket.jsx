@@ -1,11 +1,22 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {Redirect , useHistory} from 'react-router-dom'
 import './buyTicket.css'
 import Timer from '../timer';
+import spinner from  '../spinner.gif'
 
 function BuyTicket(props) {
   const history = useHistory()
   const nintyArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+  const [missingNumbers, setMissingNumbers] = useState(0)
+  const [isMetamaskError, setMetamaskError] = useState(false)
+  const [isWaiting, setWaiting] = useState(false)
+
+  useEffect( () => {
+    console.log(props)
+    if(!props.contractAddress){
+      history.push('/')
+    }
+  }, [])
 
   function ticketGenerate(a) {
     const arr = [...a];
@@ -25,28 +36,48 @@ function BuyTicket(props) {
     props.clearTicket()
   }
 
-  function joinGame() {
-    props.joinGame()
-    history.push('/game-play')
+  async function joinGame() {
+    setWaiting(true)
+    setMissingNumbers(0)
+    setMetamaskError(false)
+    try {
+      await props.joinGame()
+      history.push('/game-play')
+    } catch (error) {
+      if(error.message === "not enough numbers"){
+        setWaiting(false)
+        setMissingNumbers(error.missingNumbers)
+      } else if(error.code === 4001) {
+        setWaiting(false)
+        setMetamaskError(true)
+      } else {
+        console.log(error)
+      }
+    }
   }
 
   return (
     <div className="buy-ticket">
       <div className="upperdeck">
-        <div className="ticket-display">
-          {
-            props.ticket.map( (item, index) => {
-              if(item < 10){
-                return (
-                  <div key={index} className={`ticket-${index} number-box`}>0{item}</div>
-                )
-              } else {
-                return (
-                  <div key={index} className={`ticket-${index} number-box`}>{item}</div>
-                )
-              }
-            })
-          }
+        <div id="user-ticket">
+          <div id="your-ticket">
+            Your Ticket(15 numbers)
+          </div>
+          <div id="ticket-display">
+            {
+              props.ticket.map( (item, index) => {
+                if(item < 10){
+                  return (
+                    <div key={index} className={`ticket-${index} number-box`}>0{item}</div>
+                  )
+                } else {
+                  return (
+                    <div key={index} className={`ticket-${index} number-box`}>{item}</div>
+                  )
+                }
+              })
+            }
+          </div>
         </div>
         <div className="timer-auto">
           {
@@ -60,10 +91,21 @@ function BuyTicket(props) {
           <button className="auto-button" onClick={clearTicket} >Clear Ticket</button>
         </div>
         <div className="buy-button">
-          <button className="buy-ticket-button" onClick={joinGame} >Buy Ticket!</button>
+          {/* <div id="blank-space"></div> */}
+          <div id="buy-ticket-container">
+            <button className="buy-ticket-button" onClick={joinGame} >Buy Ticket!</button>
+          </div>
+          <div id="buy-error">
+            <div id="count-error" className={`${!missingNumbers ? 'hidden': ''}`}>Please select {missingNumbers} more number{missingNumbers > 1 ? 's' : ''}</div>
+            <div className={`${!isMetamaskError ? 'hidden' : ''}`}>Please confirm the transaction in Metamask Popup</div>
+            <img className={`${!isWaiting ? 'hidden' : '' }`} width="25%" height="auto" src={spinner} style={{objectFit: "cover"}} alt="Loading..." ></img>
+          </div>
         </div>
       </div>
       <div className="lowerdeck">
+        <div>
+          Select numbers for your Ticket
+        </div>
         <div className="all-numbers">
           {
             nintyArray.map((index) => {

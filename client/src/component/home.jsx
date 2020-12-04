@@ -13,7 +13,7 @@ function Home(props) {
                     (!props.gameEscrow)
                     ? 
                     <>
-                        <img width="30%" height="50%" src={spinner} style={{objectFit: "cover"}} alt="Loading..." ></img>
+                        <img width="25%" height="auto" src={spinner} style={{objectFit: "cover"}} alt="Loading..." ></img>
                         <div>New Game is being created, please wait.</div>
                     </>
                     :
@@ -29,9 +29,15 @@ function Home(props) {
                                 {
                                     (props.gameState === 'ready')
                                     ?
-                                    <Timer time={props.timer} />
+                                    <>
+                                        <Timer time={props.timer} />
+                                        <div className="countdown">Countdown will start after you join the game.</div>
+                                    </>
                                     :
-                                    <Timer time={props.timer} />
+                                    <>
+                                        <Timer time={props.timer} />
+                                        <div className="countdown">Countdown has started. Join before it ends.</div>
+                                    </>
                                 }
                             </div>
                         </div>

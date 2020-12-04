@@ -47,11 +47,16 @@
 
 .game-timer {
     /* border: solid red 1px; */
-    width: 30%;
-    height: 50%;
+    width: 25%;
+    height: 60%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+}
+
+.countdown {
+    text-align: center;
 }
 
 .game-button {
@@ -80,6 +85,6 @@
 #ticket-button:hover {
     border: 0;
     cursor: pointer;
-    background-color: #111;
+    background-color: #353535;
 }
 

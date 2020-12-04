@@ -8,6 +8,7 @@ import Home from './component/home'
 import BuyTicket from './component/buyTicket/buyTicket'
 import Waiting from './component/waiting'
 import GamePlay from './component/gamePlay/gamePlay'
+import Footer from './component/Footer'
 
 const sampleTicket= [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
@@ -53,13 +54,14 @@ function App() {
     // setAccount(accounts[0])
   }
 
-  function setListeners(endpoint) {
+  function setupSocket(endpoint) {
     socket = Socket(endpoint)
   }
 
   useEffect(() => {
     setupWeb3()
-    setListeners('https://ethereum-housie.herokuapp.com/')
+    // setupSocket('https://ethereum-housie.herokuapp.com/')
+    setupSocket('http://localhost:5000/')
 
     socket.on('game-data', (data) => {
       // setGameData(data)
@@ -173,7 +175,7 @@ function App() {
   }
 
   async function joinGame() {
-    if(!(gameTicket.length === 15)) return
+    if(!(gameTicket.length === 15)) throw {message: "not enough numbers", missingNumbers: 15 - gameTicket.length}
     contract = new web3.eth.Contract(contractAbi, contractAddress)
     console.log(contract)
     try {
@@ -191,10 +193,12 @@ function App() {
           ticket: gameTicket,
         })
       } catch (error) {
-        console.log(error)
+        console.log('socket error')
+        throw error
       }
     } catch (error) {
-      console.log(error)
+      // console.log(error)
+      throw error
     }
   }
 
@@ -223,6 +227,7 @@ function App() {
           <Route path="/game-over" exact render={(props) => (<Waiting {...props} winner={winner} />)} />
           <Route path="/game-play" exact render={(props) => (<GamePlay {...props} numbers={numbers} ticket={gameTicket} gameOver={gameOver} />)} />
         </Switch>
+      <Footer />
       </div>
     </Router>
   );

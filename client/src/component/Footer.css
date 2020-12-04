@@ -1,0 +1,41 @@
+#footer {
+    color: aliceblue;
+    z-index: 100;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #272727;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: medium;
+    margin-left: 1rem;
+    }
+
+.logo-image {
+    width: 15rem;
+    height: auto;
+    object-fit: scale-down;
+}
+
+.icon-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 1rem;
+}
+
+.icons{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
