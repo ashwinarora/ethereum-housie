@@ -17,8 +17,17 @@
     align-items: center;
 }
 
-.ticket-display {
+#ticket-area {
     width: 40%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.ticket-display {
+    width: 100%;
     min-height: 30vh;
     border: solid rgb(78, 70, 70) 5px;
     display: grid;
@@ -92,9 +101,21 @@
     grid-row: 3/4;
 }
 
+#number-area {
+    width: 30%;
+    height: auto;
+}
+
+.game-start-timer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
 .top-number {
     /* border: solid blue 1px; */
-    width: 30%;
+    width: 100%;
     min-height: 30vh;
     display: flex;
     justify-content: center;
@@ -129,16 +150,20 @@
     margin: 1px;
 }
 
-.number-hover:hover {
+/* .number-hover:hover {
     cursor: pointer;
     background-color: #111;
-}
+} */
 
 .yellow-number {
     background-color: rgb(204, 204, 45);
 }
 
-.yellow-number:hover {
+/* .yellow-number:hover {
     cursor: pointer;
     background-color: rgb(253, 253, 0);
+} */
+
+.hidden {
+    display: none;
 }

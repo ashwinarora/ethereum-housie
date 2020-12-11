@@ -68,10 +68,10 @@ let contract = new web3.eth.Contract(contractAbi, process.env.CONTRACT_ADDRESS)
 const address = '0x9428dB8E96608b58C6d13699c18f4232B897cB8c'
 
 const state = {
-  ready: 'ready',
-  setup: 'setup',
-  play: 'play',
-  end: 'end'
+  ready: 'ready', // before first player has joined
+  setup: 'setup', // after first player has joined and timer is started
+  play: 'play', // timer has ended
+  end: 'end' // game has ended
 }
 
 let networkId
@@ -97,7 +97,48 @@ function orderOfNumbers() {
   return arr
 }
 
+async function getEthPrice() {
+  try {
+    const { data } = await axios.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD')
+    const ethPrice =  parseFloat( 10 * (1 / data.USD)).toFixed(4) // ethPrice = 10 usd
+    return ethPrice
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 async function createNewGame() {
+  try {
+    const tx = contract.methods.newGame((ethPrice * 10**18).toString(10))
+    let gas = await tx.estimateGas({from: address});
+    // gas = gas + gasIncrement
+    console.log(`gas=${gas}`)
+    const gasPrice = await web3.eth.getGasPrice();
+    const data = tx.encodeABI();
+    const nonce = await web3.eth.getTransactionCount(address);
+    const txData = {
+      from: address,
+      to: contract.options.address,
+      data: data,
+      gas,
+      gasPrice,
+      nonce
+    };
+    const receipt = await web3.eth.sendTransaction(txData);
+    const gameId = parseInt(receipt.logs[0].data)
+    const transactionHash = receipt.transactionHash
+    return {gameId, transactionHash}
+  } catch (error) {
+    console.log('new game transaction errored')
+    throw error
+  }
+}
+
+
+async function createNewGame_old() {
+  games.push({
+    state: state.ready,
+  })
   let ethPrice
   let gameId
   try {
@@ -129,7 +170,16 @@ async function createNewGame() {
     gameId = parseInt(receipt.logs[0].data)
     console.log(`gameId=${parseInt(receipt.logs[0].data)}`)
     console.log(`Transaction hash: ${receipt.transactionHash}`);
-    games.push({
+    // games.push({
+    //   gameId: gameId,
+    //   escrow: ethPrice,
+    //   state: state.ready,
+    //   timer: 90000,
+    //   contractAddress: process.env.CONTRACT_ADDRESS,
+    //   contractAbi: contractAbi,
+    //   players: []
+    // })
+    games[games.length -1 ] = {
       gameId: gameId,
       escrow: ethPrice,
       state: state.ready,
@@ -137,31 +187,39 @@ async function createNewGame() {
       contractAddress: process.env.CONTRACT_ADDRESS,
       contractAbi: contractAbi,
       players: []
-    })
+    }
     // gasIncrement++
   } catch (error) {
     console.log('!!!!!!')
-    console.log(error)  
-  } 
+    console.log(error)
+    // throw error
+  }
 }
 
+let transactionPromise
+
 io.on('connection', (socket) => {
-  socket.on('request-game-data', async () => {
+  socket.on('request-game-data', async (data) => {
+    console.log('NEW REQUEST')
     // socket.emit('game-data', "your game data#####")
     if(!(games[games.length - 1]) || (games[games.length -1].state === state.play) || (games[games.length -1].state === state.end) ){
       try {
-        await createNewGame()
+        transactionPromise = createNewGame_old()
+        await transactionPromise
+
+        // const ethPrice = await getEthPrice();
         if(games[games.length -1]){
           if(games[games.length -1].gameId){
-            console.log('emiting game data')
+            console.log(`emiting game data - ${data.socketId}`)
             socket.emit('game-data', games[games.length -1])
           }
         }
       } catch (error) {
-        console.log('line 152')
+        console.log('!!!!!!')
         console.log(error) 
       }      
     } else {
+      await transactionPromise
       socket.emit('game-data', games[games.length - 1])
     }
   })
@@ -173,18 +231,25 @@ io.on('connection', (socket) => {
     // console.log(games[gameIndex])
     socket.join(gameIndex)
     if(games[gameIndex].players.length === 0){
+      games[gameIndex].players.push({
+        socketId: data.socketId,
+        playerAddress: data.playerAddress,
+        ticket: data.ticket
+      })
+      transactionPromise = null
+      games[gameIndex].state = state.setup
       try {
-        io.to(gameIndex).emit('first-player-joined')
+        // io.to(gameIndex).emit('first-player-joined', {socketId: data.socketId, gameState: games[gameIndex].state})
+        io.emit('first-player-joined', {firstPlayerSocketId: data.socketId, gameState: games[gameIndex].state})
       } catch (error) {
         console.log(error)
       }
-      games[gameIndex].state = state.setup
       const t = setInterval( () => {
         games[gameIndex].timer -= 1000
         if(games[gameIndex].timer <= 0){
           clearInterval(t)
-          io.to(gameIndex).emit('begin-game')
           games[gameIndex].state = state.play
+          io.to(gameIndex).emit('begin-game', {gameState: games[gameIndex].state})
           const nums = orderOfNumbers()
           let i = 0
           const tt = setInterval( () => {
@@ -198,24 +263,26 @@ io.on('connection', (socket) => {
           }, 1000)
         }
       },1000)
+    } else {
+      games[gameIndex].players.push({
+        socketId: data.socketId,
+        playerAddress: data.playerAddress,
+        ticket: data.ticket
+      })
     }
-    games[gameIndex].players.push({
-      socketId: data.socketId,
-      playerAddress: data.playerAddress,
-      ticket: data.ticket
-    })
     console.log('ticket confirmation line 198')
     io.to(gameIndex).emit('ticket-confirmation', {address: data.playerAddress})
   })
 
   socket.on('game-won', async (data) => {
     const gameIndex = data.gameId - gameNumber - 1 // index of the games array
+    if(games[gameIndex].state === state.end) return
     games[gameIndex].state = state.end
     console.log(`Game Won, ${data.playerAddress}`)
     const id = data.gameId
     const playerAddress = data.playerAddress
     const amt = games[gameIndex].escrow * games[gameIndex].players.length
-    io.to(gameIndex).emit('game-over')
+    io.to(gameIndex).emit('game-over', {socketId: data.socketId})
     // try {
     //   const tx = await web3.eth.sendTransaction({from: address, to:playerAddress, value: web3.utils.toWei(amt, 'ether')})
     //   console.log(tx)

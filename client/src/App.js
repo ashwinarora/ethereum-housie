@@ -34,34 +34,41 @@ function App() {
   const [intervalid, setIntervalId] = useState()
   const [gameArray, setGameArray] = useState(nintyArray)
   const [gameTicket, setGameTicket] = useState([])
+  //winner is the number of numbers that have been crossed of
   const [winner, setWinner] = useState(0)
   const [gameOver, setGameOver] = useState(false)
+  const [isWinner, setIsWinner] = useState(false)
   // const [isFirstPlayer, setIsFirstPlayer] = useState(false)
+  const [metamask, setMetamask] = useState([])
 
   const [numbers, setNumbers] = useState([])
 
   async function setupWeb3() {
     try {
-      await window.ethereum.enable()
+      const meta = await window.ethereum.enable()
+      setMetamask(meta)
     } catch (error) {
+      console.log(error)
       alert('Please reload and connect to Metamask')
     }
     web3 = new Web3(Web3.givenProvider)
     // setWeb3(new Web3(Web3.givenProvider))
     const accounts = await web3.eth.getAccounts()
-    console.log(accounts[0])
     account = accounts[0]
     // setAccount(accounts[0])
   }
+
+  useEffect( () => {
+    console.log({metamask})
+  }, [metamask])
 
   function setupSocket(endpoint) {
     socket = Socket(endpoint)
   }
 
   useEffect(() => {
-    setupWeb3()
-    // setupSocket('https://ethereum-housie.herokuapp.com/')
-    setupSocket('http://localhost:5000/')
+    // setupWeb3()
+    if(!socket) console.log('socket is falsey')
 
     socket.on('game-data', (data) => {
       // setGameData(data)
@@ -82,18 +89,24 @@ function App() {
           setGameTimer(gameTimer => (gameTimer -= 1000))
         }, 1000)
         setIntervalId(t)
-      }
+      } 
     })
 
-    socket.on('first-player-joined', () => {
-      if(isFirstPlayer){
-        console.log('first-player-joined')
-        setGameState('setup')
-        const t = window.setInterval(function(){
-          setGameTimer(gameTimer => (gameTimer -= 1000))
-        }, 1000)
-        setIntervalId(t)
+    socket.on('first-player-joined', (data) => {
+      console.log('first player has joined')
+      console.log({dataSocketId: data.firstPlayerSocketId, mySocket: socket.id})
+      setGameState(data.gameState)
+      const t = window.setInterval(function(){
+        setGameTimer(gameTimer => (gameTimer -= 1000))
+      }, 1000)
+      setIntervalId(t)
+      if(data.socketId === socket.id){
+        console.log('you-are-first-player')
       }
+
+      // if(data.firstPlayerSocketId === socket.id){
+      //   console.log('you-are-first-player')
+      // }
     })
 
     socket.on('ticket-confirmation', (data) => {
@@ -102,8 +115,9 @@ function App() {
       }
     })
 
-    socket.on('begin-game', () => {
+    socket.on('begin-game', (data) => {
       console.log('game begins')
+      setGameState(data.gameState)
     })
 
     socket.on('new-number', (data) => {
@@ -113,18 +127,43 @@ function App() {
       })
     })
 
-    socket.on('game-over', () => {
+    socket.on('game-over', (data) => {
       console.log('game-over')
       setGameOver(true)
+      if(data.socketId === socket.id){
+        console.log('you have won')
+        setIsWinner(true)
+      }
     })
 
-    socket.emit('request-game-data')
+    // requestNewGame()
 
     return () => {
       console.log('Cleaning App.js')
       socket.off('game-data')
     }
   }, [])
+
+  async function isSocketConnected(){
+    return new Promise( (resolve, reject) => {
+      socket.on('connect', () => {
+        resolve(socket.id)
+      });
+    })
+  }
+
+  async function requestNewGame() {
+    // setupSocket('https://ethereum-housie.herokuapp.com/')
+    setupSocket('http://localhost:5000/')
+    const id = await isSocketConnected()
+    console.log({id})
+    try {
+      console.log(`requesting game data - ${socket.id}`)
+      await socket.emit('request-game-data', {socketId: socket.id})
+    } catch (error) {
+      throw error
+    }
+  }
 
   useEffect( () => {
     if(gameTicket.indexOf(numbers[numbers.length -1]) !== -1){
@@ -137,7 +176,8 @@ function App() {
       console.log(`GAME-WON ${gameId} -- ${account} `)
       socket.emit('game-won' , {
         gameId: gameId,
-        playerAddress: account
+        playerAddress: account,
+        socketId: socket.id
       })
     }
   }, [winner])
@@ -178,6 +218,7 @@ function App() {
     if(!(gameTicket.length === 15)) throw {message: "not enough numbers", missingNumbers: 15 - gameTicket.length}
     contract = new web3.eth.Contract(contractAbi, contractAddress)
     console.log(contract)
+    console.log({socketid: socket.id})
     try {
       const tx = await contract.methods.joinGame(gameId).send({
         from: account,
@@ -207,7 +248,7 @@ function App() {
       <div className="App">
         <NavBar />
         <Switch>
-          <Route path="/" exact render={(props) => (<Home {...props} gameEscrow={gameEscrow} gameState={gameState} timer={gameTimer} />)} />
+          <Route path="/" exact render={(props) => (<Home {...props} setupWeb3={setupWeb3} gameEscrow={gameEscrow} gameState={gameState} timer={gameTimer} requestNewGame={requestNewGame} metamask={metamask} />)} />
           <Route path="/buy-ticket" exact render={(props) => (
             <BuyTicket {...props} 
               gameEscrow={gameEscrow} 
@@ -224,8 +265,17 @@ function App() {
               joinGame={joinGame}
            />)}
           />
-          <Route path="/game-over" exact render={(props) => (<Waiting {...props} winner={winner} />)} />
-          <Route path="/game-play" exact render={(props) => (<GamePlay {...props} numbers={numbers} ticket={gameTicket} gameOver={gameOver} />)} />
+          <Route path="/game-over" exact render={(props) => (<Waiting {...props} winner={winner} isWinner={isWinner} />)} />
+          <Route path="/game-play" exact render={(props) => (
+            <GamePlay {...props} 
+              numbers={numbers} 
+              ticket={gameTicket} 
+              gameOver={gameOver} 
+              timer={gameTimer} 
+              gameState={gameState}
+              winner={winner}
+            />)}
+          />
         </Switch>
       <Footer />
       </div>

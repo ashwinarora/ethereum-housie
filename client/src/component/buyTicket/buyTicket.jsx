@@ -10,6 +10,7 @@ function BuyTicket(props) {
   const [missingNumbers, setMissingNumbers] = useState(0)
   const [isMetamaskError, setMetamaskError] = useState(false)
   const [isWaiting, setWaiting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState()
 
   useEffect( () => {
     console.log(props)
@@ -50,7 +51,13 @@ function BuyTicket(props) {
       } else if(error.code === 4001) {
         setWaiting(false)
         setMetamaskError(true)
-      } else {
+        setErrorMessage('Please confirm the transaction in Metamask Popup')
+      } else if(error.code === -32602){
+        setWaiting(false)
+        setMetamaskError(true)
+        setErrorMessage('Metamask Error: Please make sure metamask is connected.')
+      }
+      else {
         console.log(error)
       }
     }
@@ -97,7 +104,7 @@ function BuyTicket(props) {
           </div>
           <div id="buy-error">
             <div id="count-error" className={`${!missingNumbers ? 'hidden': ''}`}>Please select {missingNumbers} more number{missingNumbers > 1 ? 's' : ''}</div>
-            <div className={`${!isMetamaskError ? 'hidden' : ''}`}>Please confirm the transaction in Metamask Popup</div>
+            <div className={`${!isMetamaskError ? 'hidden' : ''}`}>{errorMessage}</div>
             <img className={`${!isWaiting ? 'hidden' : '' }`} width="25%" height="auto" src={spinner} style={{objectFit: "cover"}} alt="Loading..." ></img>
           </div>
         </div>

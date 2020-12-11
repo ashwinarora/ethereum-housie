@@ -1,16 +1,37 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import './home.css'
 import Timer from './timer.jsx'
 import spinner from  './spinner.gif'
 
 function Home(props) {
+    useEffect( () => {
+        props.requestNewGame()
+        console.log(props)
+    }, [])
+
+    useEffect( () => {
+        if(props.timer <= 0){
+            props.requestNewGame()
+            console.log(props)
+        }
+    }, [props.timer])
+
     return (
         <div className="home">
             <div className="game-info">
                 <div className="game-heading">Welcome To Housie!</div>
-                {
-                    (!props.gameEscrow)
+                {   
+                    !(props.metamask.length)
+                    ?
+                    <div id="metamaskDiv">
+                        <button id="metamaskButton" onClick={props.setupWeb3}>
+                            Connect to Metamask
+                            <svg id="linkIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                        </button>
+                    </div>
+                    :
+                    ((!props.timer)
                     ? 
                     <>
                         <img width="25%" height="auto" src={spinner} style={{objectFit: "cover"}} alt="Loading..." ></img>
@@ -31,7 +52,7 @@ function Home(props) {
                                     ?
                                     <>
                                         <Timer time={props.timer} />
-                                        <div className="countdown">Countdown will start after you join the game.</div>
+                                        <div className="countdown">Countdown will start after the first player joins.</div>
                                     </>
                                     :
                                     <>
@@ -49,9 +70,8 @@ function Home(props) {
                                 </svg>
                             </Link>
                         </div>
-                    </>
+                    </>)
                 }
-                
             </div>
         </div>
     )
