@@ -3,20 +3,20 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-// var helmet = require('helmet')
+var helmet = require('helmet')
 var axios = require('axios')
 
 require('dotenv').config()
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5001
 
 var Web3 = require('web3')
 
-// var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/users');
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
 
 var app = express();
-// app.use(helmet());
+app.use(helmet());
 
 const server = app.listen(PORT, () => {
   console.log("Listening on PORT: " + PORT);
@@ -31,17 +31,17 @@ if(process.env.NODE_ENV === 'production'){
 }
 
 // view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
-// app.use(logger('dev'));
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
-// app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/', indexRouter);
-// app.use('/users', usersRouter);
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -62,10 +62,11 @@ app.use(function(err, req, res, next) {
 //--------------------------------------------
 
 const contractAbi = require('./contractData')
-const web3 = new Web3(process.env.INFURA_KEY)
+const web3 = new Web3("https://data-seed-prebsc-2-s2.bnbchain.org:8545")
 web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY);
-let contract = new web3.eth.Contract(contractAbi, process.env.CONTRACT_ADDRESS)
-const address = '0x9428dB8E96608b58C6d13699c18f4232B897cB8c'
+const contractAddress = "0x4EfE0866A22cF8062efAEF973E50B534B14133D7"
+let contract = new web3.eth.Contract(contractAbi, contractAddress)
+const address = '0xE3C455Da5824bb6E41686c824A7dDCc815fe38B0'
 
 const state = {
   ready: 'ready', // before first player has joined
@@ -200,7 +201,7 @@ let transactionPromise
 
 io.on('connection', (socket) => {
   socket.on('request-game-data', async (data) => {
-    console.log('NEW REQUEST')
+    console.log('Housie: NEW GAME REQUEST')
     // socket.emit('game-data', "your game data#####")
     if(!(games[games.length - 1]) || (games[games.length -1].state === state.play) || (games[games.length -1].state === state.end) ){
       try {
@@ -211,7 +212,7 @@ io.on('connection', (socket) => {
         if(games[games.length -1]){
           if(games[games.length -1].gameId){
             console.log(`emiting game data - ${data.socketId}`)
-            socket.emit('game-data', games[games.length -1])
+            socket.emit('game-data', games[games.length - 1])
           }
         }
       } catch (error) {
