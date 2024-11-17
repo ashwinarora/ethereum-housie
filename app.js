@@ -23,19 +23,8 @@ const server = app.listen(PORT, () => {
 });
 const io = require('socket.io')(server);
 
-// if(process.env.RAILWAY_ENVIRONMENT_NAME === 'production'){
-//   console.log("in production")
-//   app.use(express.static('client/build'))
-//   app.get('*', (req,res) => {
-//     res.sendfile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-//   })
-// } else {
-//   app.use(express.static(path.join(__dirname, 'public')));
-// }
-
-console.log(process.env.RAILWAY_ENVIRONMENT_NAME)
-
-if (process.env.RAILWAY_ENVIRONMENT_NAME === 'ethereum-housie-pr-2') {
+if (process.env.RAILWAY_ENVIRONMENT_NAME === 'production') {
+  console.log("Running in production mode")
   app.use(express.static('client/build'));
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
