@@ -7,6 +7,7 @@
     "build": "cd client && npm run build",
     "install-client": "cd client && npm install",
     "heroku-postbuild": "npm run install-client && npm run build",
+    "railway-build": "cd client && npm install && CI=false npm run build",
     "devstart": "nodemon --inspect ./bin/www",
     "serverstart": "DEBUG=server:* nodemon app"
   },
