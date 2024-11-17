@@ -1,5 +1,6 @@
 import React from 'react'
 import './Footer.css'
+import myLogo from './myLogo.png'
 
 function Footer() {
     return (
@@ -8,7 +9,7 @@ function Footer() {
                 <div className="logo-div">
                     <div>Developed By: </div>
                     <a className="logo-div" href="https://ashwinarora.com/" target="_blank">
-                        <img className="logo-image" src="https://www.ashwinarora.com/assets/icons/fav.png" alt="Ashwin Arora"  />
+                        <img className="logo-image" src={myLogo} alt="Ashwin Arora"  />
                     </a>
                 </div>
                 <div className="icon-div">
