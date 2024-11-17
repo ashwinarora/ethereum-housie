@@ -8,7 +8,7 @@ function Footer() {
                 <div className="logo-div">
                     <div>Developed By: </div>
                     <a className="logo-div" href="https://ashwinarora.com/" target="_blank">
-                        <img className="logo-image" src="https://drive.google.com/uc?export=view&id=1l9G0sC4EGWXxov6B2lpS0wkXTBCvJv74" alt="Ashwin Arora" />
+                        <img className="logo-image" src="https://www.ashwinarora.com/assets/icons/fav.png" alt="Ashwin Arora"  />
                     </a>
                 </div>
                 <div className="icon-div">
