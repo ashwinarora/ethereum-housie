@@ -23,13 +23,15 @@ const server = app.listen(PORT, () => {
 });
 const io = require('socket.io')(server);
 
-if(process.env.NODE_ENV === 'production'){
+if(process.env.RAILWAY_ENVIRONMENT_NAME === 'production'){
   app.use(express.static('client/build'))
   app.get('*', (req,res) => {
     res.sendfile(path.resolve(__dirname, 'client', 'build', 'index.html'))
   })
+} else {
+  app.use(express.static(path.join(__dirname, 'public')));
 }
-
+ 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -38,7 +40,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
