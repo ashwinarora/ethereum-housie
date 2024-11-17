@@ -35,7 +35,7 @@ const io = require('socket.io')(server);
 
 console.log(process.env.RAILWAY_ENVIRONMENT_NAME)
 
-if (process.env.RAILWAY_ENVIRONMENT_NAME === 'production') {
+if (process.env.RAILWAY_ENVIRONMENT_NAME === 'ethereum-housie-pr-2') {
   app.use(express.static('client/build'));
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
