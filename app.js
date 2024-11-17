@@ -24,6 +24,7 @@ const server = app.listen(PORT, () => {
 const io = require('socket.io')(server);
 
 if(process.env.RAILWAY_ENVIRONMENT_NAME === 'production'){
+  console.log("in production")
   app.use(express.static('client/build'))
   app.get('*', (req,res) => {
     res.sendfile(path.resolve(__dirname, 'client', 'build', 'index.html'))
