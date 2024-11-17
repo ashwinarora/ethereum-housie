@@ -33,6 +33,8 @@ const io = require('socket.io')(server);
 //   app.use(express.static(path.join(__dirname, 'public')));
 // }
 
+console.log(process.env.RAILWAY_ENVIRONMENT_NAME)
+
 if (process.env.RAILWAY_ENVIRONMENT_NAME === 'production') {
   app.use(express.static('client/build'));
   app.get('*', (req, res) => {
