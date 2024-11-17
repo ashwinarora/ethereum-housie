@@ -155,7 +155,7 @@ function App() {
   async function requestNewGame() {
     // setupSocket('https://ethereum-housie.herokuapp.com/')
     // setupSocket('http://localhost:5001/')
-    setupSocket('http://https://ethhousie.com/')
+    setupSocket('https://ethhousie.com/')
     const id = await isSocketConnected()
     console.log({id})
     try {
