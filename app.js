@@ -30,6 +30,7 @@ if (process.env.RAILWAY_ENVIRONMENT_NAME === 'production') {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
 } else {
+  console.log("Running in development mode")
   app.use(express.static(path.join(__dirname, 'public')));
 }
  
