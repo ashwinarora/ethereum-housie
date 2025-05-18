@@ -5,17 +5,17 @@ import Timer from './timer.jsx'
 import spinner from  './spinner.gif'
 
 function Home(props) {
-    useEffect( () => {
+    useEffect(() => {
         props.requestNewGame()
         console.log(props)
-    }, [])
+    }, [props])
 
-    useEffect( () => {
+    useEffect(() => {
         if(props.timer <= 0){
             props.requestNewGame()
             console.log(props)
         }
-    }, [props.timer])
+    }, [props.timer, props])
 
     return (
         <div className="home">

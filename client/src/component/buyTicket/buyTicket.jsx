@@ -12,12 +12,12 @@ function BuyTicket(props) {
   const [isWaiting, setWaiting] = useState(false)
   const [errorMessage, setErrorMessage] = useState()
 
-  useEffect( () => {
+  useEffect(() => {
     console.log(props)
     if(!props.contractAddress){
       history.push('/')
     }
-  }, [])
+  }, [props, history])
 
   function ticketGenerate(a) {
     const arr = [...a];
