@@ -8,7 +8,7 @@ function NavBar() {
             <div id="links">
                 <Link to="/" id="heading" className="nav-links">Housie</Link>
             </div>
-            <a id="dev" className="nav-links" href="https://ashwinarora.com/" target="_blank">
+            <a id="dev" className="nav-links" href="https://ashwinarora.com/" target="_blank" rel="noreferrer">
                 <div id="port">
                     <div>
                         Developer Portfolio

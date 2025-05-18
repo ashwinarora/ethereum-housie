@@ -10,8 +10,6 @@ import Waiting from './component/waiting'
 import GamePlay from './component/gamePlay/gamePlay'
 import Footer from './component/Footer'
 
-const sampleTicket= [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-
 let socket
 let web3
 let contract
@@ -110,7 +108,7 @@ function App() {
     })
 
     socket.on('ticket-confirmation', (data) => {
-      if(account == data.address){
+      if(account === data.address){
         console.log('ticket-confirmation')
       }
     })
@@ -166,13 +164,13 @@ function App() {
     }
   }
 
-  useEffect( () => {
+  useEffect(() => {
     if(gameTicket.indexOf(numbers[numbers.length -1]) !== -1){
       setWinner( (winner) => (winner + 1)) 
     }
-  }, [numbers])
+  }, [numbers, gameTicket])
 
-  useEffect( () => {
+  useEffect(() => {
     if(winner >= 15 ){
       console.log(`GAME-WON ${gameId} -- ${account} `)
       socket.emit('game-won' , {
@@ -181,13 +179,13 @@ function App() {
         socketId: socket.id
       })
     }
-  }, [winner])
+  }, [winner, gameId, account])
 
   useEffect(() => {
     if (gameTimer <= 0) {
       window.clearInterval(intervalid)
     }
-  }, [gameTimer])
+  }, [gameTimer, intervalid])
 
   function clearTicket() {
     setGameTicket([])
@@ -216,7 +214,7 @@ function App() {
   }
 
   async function joinGame() {
-    if(!(gameTicket.length === 15)) throw {message: "not enough numbers", missingNumbers: 15 - gameTicket.length}
+    if(!(gameTicket.length === 15)) throw new Error("not enough numbers")
     contract = new web3.eth.Contract(contractAbi, contractAddress)
     console.log(contract)
     console.log({socketid: socket.id})
@@ -239,7 +237,6 @@ function App() {
         throw error
       }
     } catch (error) {
-      // console.log(error)
       throw error
     }
   }
