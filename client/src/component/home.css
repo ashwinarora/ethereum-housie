@@ -1,123 +1,238 @@
 .home {
-    margin-top: 10vh;
+    margin-top: 0;
+    padding: calc(var(--nav-h) + 1.5rem) 1rem calc(var(--footer-h) + 1.5rem);
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 80vh;
+    min-height: 100vh;
 }
 
 .game-info {
-    border: solid rgb(78, 70, 70) 5px;
-    width: 60vw;
-    height: 50vh;
+    position: relative;
+    width: min(100%, 720px);
+    height: auto;
+    min-height: 50vh;
+    padding: 2.5rem 2rem 2.25rem;
     display: flex;
     flex-direction: column;
-    justify-content: stretch;
+    justify-content: center;
     align-items: center;
+    gap: 1.75rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+    box-shadow: var(--shadow-card);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    overflow: hidden;
+    animation: rise 0.5s var(--ease-out) both;
+}
+
+.game-info::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--coral), var(--accent), var(--mint));
 }
 
 .game-heading {
-    /* border: solid red 1px; */
     width: 100%;
-    height: 20%;
+    height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 200%;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    background: linear-gradient(90deg, #fff 0%, #ffe9b3 55%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .price-timer {
-    /* border: solid blue 1px; */
     width: 100%;
-    height: 50%;
-    display: flex;
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
     justify-content: space-around;
-    align-items: center;
+    align-items: stretch;
 }
 
-.ticket-price {
-    /* border: solid green 1px; */
-    width: 40%;
-    height: 80%;
+.ticket-price,
+.game-timer {
+    width: 100%;
+    height: auto;
+    padding: 1.25rem 1rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
+    gap: 0.35rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.ticket-price span:first-child {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.ticket-price span:nth-child(2) {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.ticket-price span:nth-child(3) {
+    color: var(--text-faint);
+    line-height: 0.8;
+}
+
+.ticket-price span:nth-child(4) {
+    font-weight: 700;
+    color: var(--text-muted);
 }
 
 .game-timer {
-    /* border: solid red 1px; */
-    width: 25%;
-    height: 60%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+    gap: 0.75rem;
+}
+
+.game-timer .timer {
+    font-size: 1.5rem;
+    height: 2.6rem;
+    padding: 0 1.2rem;
 }
 
 .countdown {
     text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    max-width: 22ch;
 }
 
 .game-button {
-    /* border: solid green 1px; */
     width: 100%;
-    height: 30%;
+    height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 200%;
+    font-size: 1rem;
 }
 
 #ticket-button {
-    height: 40%;
-    width: 70%;
+    height: auto;
+    width: min(100%, 420px);
+    padding: 0.95rem 1.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 50%;
-    color: white;
-    background-color:  rgb(78, 70, 70);
+    gap: 0.25rem;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent-ink);
+    background: linear-gradient(135deg, #ffe08a 0%, var(--accent) 55%, var(--accent-2) 100%);
     border: 0;
+    border-radius: 999px;
     text-decoration: none;
+    box-shadow: var(--glow-accent), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: transform 0.18s var(--ease-pop), box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 #ticket-button:hover {
     border: 0;
     cursor: pointer;
-    background-color: #353535;
+    background: linear-gradient(135deg, #fff0bf 0%, #ffdd85 55%, #ffc633 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px -12px rgba(255, 209, 102, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+#ticket-button:active {
+    transform: translateY(0) scale(0.98);
+}
+
+#ticket-button svg {
+    transition: transform 0.2s ease;
+}
+
+#ticket-button:hover svg {
+    transform: translateX(3px);
 }
 
 #metamaskDiv {
     width: 100%;
-    height: 100%;
+    height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 1rem 0 0.5rem;
 }
 
 #metamaskButton {
-    width: 80%;
-    height: 20%;
+    width: min(100%, 420px);
+    height: auto;
+    padding: 0.95rem 1.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color:  rgb(78, 70, 70);
-    font-size: 150%;
-    color: white;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--accent-ink);
+    background: linear-gradient(135deg, #ffe08a 0%, var(--accent) 55%, var(--accent-2) 100%);
     border: 0;
-    margin-bottom: 4rem;
+    border-radius: 999px;
+    margin-bottom: 0;
+    box-shadow: var(--glow-accent), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: transform 0.18s var(--ease-pop), box-shadow 0.2s ease;
 }
 
 #metamaskButton:hover {
     border: 0;
     cursor: pointer;
-    background-color: #353535;   
+    background: linear-gradient(135deg, #fff0bf 0%, #ffdd85 55%, #ffc633 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px -12px rgba(255, 209, 102, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+#metamaskButton:active {
+    transform: translateY(0) scale(0.98);
 }
 
 #linkIcon {
-    margin-left: 0.5rem;
-    color: white;
-    width: 6%;
+    margin-left: 0;
+    color: var(--accent-ink);
+    width: 1.25rem;
     height: auto;
+}
+
+/* "New game is being created" state */
+.game-info > div:not([class]) {
+    color: var(--text-muted);
+    font-weight: 600;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .game-info {
+        padding: 2rem 1.25rem 1.75rem;
+        min-height: 0;
+    }
+
+    .price-timer {
+        grid-template-columns: 1fr;
+    }
 }
