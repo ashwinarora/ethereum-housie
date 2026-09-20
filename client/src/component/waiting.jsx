@@ -7,8 +7,8 @@ function Waiting(props) {
             <div className="wait-info">
                 {
                     props.isWinner ?
-                    <h2>Congratulation, You have Won! Your winnings will be transfered soon.</h2> :
-                    <h2>Game Over, Better Luck Next Time.</h2>
+                    <h2 className="wait-msg win">Congratulation, You have Won! Your winnings will be transfered soon.</h2> :
+                    <h2 className="wait-msg lose">Game Over, Better Luck Next Time.</h2>
                 }
             </div>
         </div>

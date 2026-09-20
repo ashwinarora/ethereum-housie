@@ -59,7 +59,7 @@ function GamePlay(props) {
           </div>
         </div>
         <div id="number-area">
-          <div className={`${props.gameState === 'play' ? '' : 'hidden'} top-number`}>
+          <div key={props.numbers.length} className={`${props.gameState === 'play' ? '' : 'hidden'} top-number`}>
             {props.numbers[props.numbers.length -1]}
           </div>
           <div className={`${props.gameState === 'play' ? 'hidden' : 'game-start-timer'}`} >
