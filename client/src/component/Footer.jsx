@@ -1,7 +1,8 @@
 import React from 'react'
-import './Footer.css'
 import myLogo from './myLogo.png'
 
+// The credit footer. Normal builds only: import it through ../contact.js.
+// Its stylesheet, Footer.css, is imported by App.js.
 function Footer() {
     return (
         <nav id="footer" >

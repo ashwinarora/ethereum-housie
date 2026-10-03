@@ -35,25 +35,3 @@
     align-items: center;
     font-size: 150%;
 }
-
-#dev {
-    grid-column: 3/4;
-    font-size: 150%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    justify-items: end;
-    margin-right: 0.5rem;
-}
-
-#port {
-    margin-top: auto;
-    margin-bottom: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#ashwin {
-    text-decoration: none;
-}

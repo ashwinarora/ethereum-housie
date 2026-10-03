@@ -1,0 +1,13 @@
+/*
+ * No-contact builds only (loaded by noContact.js).
+ *
+ * Every page is `margin-top: 10vh; min-height: 80vh`, which leaves the last 10vh of the
+ * window to the fixed footer. Without the footer the pages take that space, keeping the
+ * same 2vh gap at the bottom that they have under the 8vh nav bar.
+ */
+.App .home,
+.App .buy-ticket,
+.App .game-play,
+.App .waiting {
+    min-height: 88vh;
+}

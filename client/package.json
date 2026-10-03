@@ -14,8 +14,8 @@
     "web3": "^1.2.11"
   },
   "scripts": {
-    "start": "react-scripts start --openssl-legacy-provider",
-    "build": "react-scripts build --openssl-legacy-provider",
+    "start": "node scripts/react-scripts.js start",
+    "build": "node scripts/react-scripts.js build",
     "test": "react-scripts test --openssl-legacy-provider",
     "eject": "react-scripts eject --openssl-legacy-provider"
   },
