@@ -8,6 +8,7 @@
     "install-client": "cd client && npm install",
     "heroku-postbuild": "npm run install-client && npm run build",
     "railway-build": "cd client && npm install && CI=false npm run build",
+    "check:no-contact": "node scripts/check-no-contact.mjs",
     "devstart": "nodemon --inspect ./bin/www",
     "serverstart": "DEBUG=server:* nodemon app"
   },
@@ -19,6 +20,7 @@
     "express": "~4.16.1",
     "helmet": "^4.0.0",
     "http-errors": "~1.6.3",
+    "http-proxy": "^1.18.1",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
     "socket.io": "^2.3.0",

@@ -8,7 +8,9 @@ import Home from './component/home'
 import BuyTicket from './component/buyTicket/buyTicket'
 import Waiting from './component/waiting'
 import GamePlay from './component/gamePlay/gamePlay'
-import Footer from './component/Footer'
+import { Footer, SOCKET_URL } from './noContact'
+// Layout rules only. Imported here, last, so that the built stylesheet keeps its rule order.
+import './component/Footer.css'
 
 let socket
 let web3
@@ -153,7 +155,7 @@ function App() {
   async function requestNewGame() {
     // setupSocket('https://ethereum-housie.herokuapp.com/')
     // setupSocket('http://localhost:5001/')
-    setupSocket('https://ethhousie.com/')
+    setupSocket(SOCKET_URL)
     const id = await isSocketConnected()
     console.log({id})
     try {
@@ -275,7 +277,7 @@ function App() {
             />)}
           />
         </Switch>
-      <Footer />
+      {Footer && <Footer />}
       </div>
     </Router>
   );
